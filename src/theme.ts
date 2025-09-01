@@ -32,24 +32,27 @@ export const font = {
   text: 14,
   small: 11,
   
-  // Семейства шрифтов - используем Google Fonts
+  // Семейства шрифтов - используем локальные шрифты
   family: {
     // Основной шрифт - Inter
-    primary: 'Inter_400Regular',
+    primary: 'Inter-Regular',
     // Жирный шрифт - Inter Bold
-    bold: 'Inter_700Bold',
+    bold: 'Inter-Bold',
     // Средний вес - Inter Medium
-    medium: 'Inter_500Medium',
+    medium: 'Inter-Medium',
     // Полужирный - Inter SemiBold
-    semibold: 'Inter_600SemiBold',
+    semibold: 'Inter-SemiBold',
     // Альтернативный шрифт - Poppins
-    secondary: 'Poppins_400Regular',
+    secondary: 'Poppins-Regular',
     // Жирный альтернативный - Poppins Bold
-    secondaryBold: 'Poppins_700Bold',
-    // Робото для технического текста
-    mono: 'Roboto_400Regular',
-    // Open Sans для заголовков
-    display: 'OpenSans_700Bold'
+    secondaryBold: 'Poppins-Bold',
+    // Средний Poppins
+    secondaryMedium: 'Poppins-Medium',
+    // Полужирный Poppins
+    secondarySemibold: 'Poppins-SemiBold',
+    // PTSansCaption шрифты
+    caption: 'PTSansCaption-Regular',
+    captionBold: 'PTSansCaption-Bold'
   },
   
   // Веса шрифтов

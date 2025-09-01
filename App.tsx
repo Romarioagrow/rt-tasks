@@ -20,6 +20,8 @@ export default function App() {
           'Poppins-Medium': require('./assets/fonts/Poppins-Medium.ttf'),
           'Poppins-SemiBold': require('./assets/fonts/Poppins-SemiBold.ttf'),
           'Poppins-Bold': require('./assets/fonts/Poppins-Bold.ttf'),
+          'PTSansCaption-Regular': require('./assets/fonts/PTSansCaption-Regular.ttf'),
+          'PTSansCaption-Bold': require('./assets/fonts/PTSansCaption-Bold.ttf'),
         });
         setFontsLoaded(true);
         console.log('Шрифты загружены успешно!');
