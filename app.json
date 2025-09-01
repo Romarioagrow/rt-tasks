@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Tasks",
-    "slug": "rn-minimal-task-app-clean",
-    "version": "1.0.0",
+    "name": "ВсёСделаю",
+    "slug": "vse-sdelayu",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -22,7 +22,7 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "com.anonymous.rnminimaltaskappclean"
+      "package": "com.vsesdelayu.app"
     },
     "web": {
       "bundler": "metro",

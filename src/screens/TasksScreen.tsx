@@ -97,7 +97,7 @@ return(
   <SafeAreaView style={styles.safe} edges={['top','left','right','bottom']}>
     <View style={styles.container}>
 
-      <Text style={styles.h1}>Задачи</Text>
+      <Text style={styles.h1}>ВсёСделаю</Text>
       <Text style={styles.caption}>Всего: {list.length} • Активных: {list.filter(t=>!t.done).length}</Text>
       <View style={styles.filtersContainer}>
         <ScrollView 
