@@ -109,9 +109,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.tasks"
+    namespace "com.anonymous.rnminimaltaskappclean"
     defaultConfig {
-        applicationId "com.tasks"
+        applicationId "com.anonymous.rnminimaltaskappclean"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

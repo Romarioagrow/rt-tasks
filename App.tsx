@@ -24,7 +24,6 @@ export default function App() {
           'PTSansCaption-Bold': require('./assets/fonts/PTSansCaption-Bold.ttf'),
         });
         setFontsLoaded(true);
-        console.log('Шрифты загружены успешно!');
       } catch (error) {
         console.error('Ошибка загрузки шрифтов:', error);
         setFontsLoaded(true); // Продолжаем работу даже с ошибкой

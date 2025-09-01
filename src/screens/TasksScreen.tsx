@@ -8,12 +8,7 @@ import TaskDetailScreen from'./TaskDetailScreen';
 import type{Task,CategoryKey}from'../types';
 import{loadTasks,saveTasks,loadCustomCategories,saveCustomCategories}from'../storage';
 
-const defaultData:Task[]=[
-  {id:'1',title:'Созвон',categories:['work'],dueAt:new Date().toISOString(),done:false,createdAt:new Date().toISOString()},
-  {id:'2',title:'Корм животных',categories:['home'],done:false,createdAt:new Date().toISOString(),subtasks:[{id:'2a',title:'Кошка',done:false},{id:'2b',title:'Собака',done:false},{id:'2c',title:'Аквариум',done:false}]},
-  {id:'3',title:'Позвонить в колледжи',categories:['global'],done:false,createdAt:new Date().toISOString()},
-  {id:'4',title:'Замена колодок',categories:['urgent'],done:false,createdAt:new Date().toISOString(),subtasks:[{id:'4a',title:'Заказать колодки',done:false},{id:'4b',title:'Сервис 18:00',done:false}]}
-];
+const defaultData:Task[]=[];
 
 const LABELS:Record<CategoryKey,string>={work:'Работа',home:'Дом',global:'Глобальное',habit:'Повтор',personal:'Личное',urgent:'Срочно'};
 
