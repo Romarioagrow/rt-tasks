@@ -1,12 +1,35 @@
 import React,{useEffect,useMemo,useState,useCallback}from'react';
-import{View,Text,StyleSheet,FlatList,TouchableOpacity,TextInput,KeyboardAvoidingView,Platform,ScrollView}from'react-native';
+import{View,Text,StyleSheet,FlatList,TouchableOpacity,TextInput,KeyboardAvoidingView,Platform,ScrollView,LayoutAnimation}from'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import{colors,spacing}from'../theme';
 import TaskItem from'../components/TaskItem';
+import CompactTaskItem from'../components/CompactTaskItem';
 import TaskDetailScreen from'./TaskDetailScreen';
 
 import type{Task,CategoryKey}from'../types';
 import{loadTasks,saveTasks,loadCustomCategories,saveCustomCategories}from'../storage';
+
+// Функции для работы с режимом отображения
+const VIEW_MODE_KEY = 'viewMode';
+const loadViewMode = async (): Promise<'detailed' | 'compact'> => {
+  try {
+    // В реальном приложении здесь можно использовать AsyncStorage
+    // Пока что возвращаем значение по умолчанию
+    return 'detailed';
+  } catch {
+    return 'detailed';
+  }
+};
+
+const saveViewMode = async (mode: 'detailed' | 'compact') => {
+  try {
+    // В реальном приложении здесь можно использовать AsyncStorage
+    // Пока что просто логируем
+    console.log('View mode saved:', mode);
+  } catch (error) {
+    console.error('Failed to save view mode:', error);
+  }
+};
 
 const defaultData:Task[]=[];
 
@@ -21,10 +44,13 @@ const[filter,setFilter]=useState<'all'|CategoryKey>('all');
 const[customCategories,setCustomCategories]=useState<string[]>([]);
 const[detailOpen,setDetailOpen]=useState(false);
 const[detailTask,setDetailTask]=useState<Task|null>(null);
+const[viewMode,setViewMode]=useState<'detailed'|'compact'>('detailed');
 useEffect(()=>{(async()=>{const stored=await loadTasks();setTasks(stored.length?stored:defaultData);})();},[]);
 useEffect(()=>{saveTasks(tasks);},[tasks]);
 useEffect(()=>{(async()=>{const stored=await loadCustomCategories();setCustomCategories(stored);})();},[]);
 useEffect(()=>{saveCustomCategories(customCategories);},[customCategories]);
+useEffect(()=>{(async()=>{const stored=await loadViewMode();setViewMode(stored);})();},[]);
+useEffect(()=>{saveViewMode(viewMode);},[viewMode]);
 
 
 
@@ -75,19 +101,36 @@ const toggleSub=useCallback((taskId:string,subId:string)=>{
 const handleDelete=useCallback((id:string)=>{
   setTasks(prev=>prev.filter(t=>t.id!==id));
 },[]);
-const renderItem=useCallback(({item}:{item:Task})=> (
-  <TaskItem 
-    task={item} 
-    onToggle={toggle} 
-    onToggleSub={toggleSub} 
-    onDelete={handleDelete} 
-    customCategories={customCategories}
-    onPress={() => {
-      setDetailTask(item);
-      setDetailOpen(true);
-    }}
-  />
-),[toggle,toggleSub,customCategories]);
+const renderItem=useCallback(({item}:{item:Task})=> {
+  if (viewMode === 'compact') {
+    return (
+      <CompactTaskItem 
+        task={item} 
+        onToggle={toggle} 
+        onDelete={handleDelete} 
+        customCategories={customCategories}
+        onPress={() => {
+          setDetailTask(item);
+          setDetailOpen(true);
+        }}
+      />
+    );
+  }
+  
+  return (
+    <TaskItem 
+      task={item} 
+      onToggle={toggle} 
+      onToggleSub={toggleSub} 
+      onDelete={handleDelete} 
+      customCategories={customCategories}
+      onPress={() => {
+        setDetailTask(item);
+        setDetailOpen(true);
+      }}
+    />
+  );
+},[toggle,toggleSub,customCategories,viewMode]);
 
 
 
@@ -121,30 +164,57 @@ return(
         data={list}
         keyExtractor={i=>i.id}
         renderItem={renderItem}
-        contentContainerStyle={{paddingBottom:spacing(8)}}
+        contentContainerStyle={{paddingBottom:spacing(12)}}
         initialNumToRender={10}
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={50}
         windowSize={7}
         removeClippedSubviews
       />
-      <TouchableOpacity style={styles.fab} onPress={()=>{
-        // Открываем редактор с черновиком без категорий по умолчанию
-        const draft:Task={
-          id:String(Date.now()),
-          title:'',
-          categories:[],
-          done:false,
-          createdAt:new Date().toISOString(),
-          subtasks:[],
-          // Не устанавливаем updatedAt при создании новой задачи
-        };
-        setDraftTask(draft);
-        setEditingTaskId(null);
-        setEditorOpen(true);
-      }}>
-        <Text style={styles.fabPlus}>＋</Text>
-      </TouchableOpacity>
+      {/* Нижний навбар */}
+      <View style={styles.bottomNav} pointerEvents="box-none">
+        <View style={styles.bottomNavInner}>
+          <TouchableOpacity
+            style={styles.navBtn}
+            activeOpacity={0.7}
+            onPress={()=>{LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);setViewMode('detailed');}}
+          >
+            <Text style={[styles.navIcon,viewMode==='detailed'&&styles.navIconActive]}>📋</Text>
+            <Text style={[styles.navText,viewMode==='detailed'&&styles.navTextActive]}>Подробно</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={styles.navBtnCenter}
+            activeOpacity={0.7}
+            onPress={()=>{
+              // Открываем редактор с черновиком без категорий по умолчанию
+              const draft:Task={
+                id:String(Date.now()),
+                title:'',
+                categories:[],
+                done:false,
+                createdAt:new Date().toISOString(),
+                subtasks:[],
+                // Не устанавливаем updatedAt при создании новой задачи
+              };
+              setDraftTask(draft);
+              setEditingTaskId(null);
+              setEditorOpen(true);
+            }}
+          >
+            <Text style={styles.navIconCenter}>＋</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={styles.navBtn}
+            activeOpacity={0.7}
+            onPress={()=>{LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);setViewMode('compact');}}
+          >
+            <Text style={[styles.navIcon,viewMode==='compact'&&styles.navIconActive]}>📝</Text>
+            <Text style={[styles.navText,viewMode==='compact'&&styles.navTextActive]}>Кратко</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       {editorOpen?(
         <TaskEditor
           task={(editingTaskId?tasks.find(t=>t.id===editingTaskId):draftTask)!}
@@ -215,7 +285,16 @@ fbtnOn:{backgroundColor:'#1f2937'},
 ftext:{color:'#a3a3aa',fontSize:12,fontFamily:'Inter-Regular'},
 ftextOn:{color:'#ffffff',fontFamily:'Inter-Bold'},
 fab:{position:'absolute',right:spacing(2),bottom:spacing(2),width:48,height:48,borderRadius:24,backgroundColor:'#ffcc00',alignItems:'center',justifyContent:'center'},
-fabPlus:{fontSize:24,fontFamily:'Inter-Bold'}
+fabPlus:{fontSize:24,fontFamily:'Inter-Bold'},
+bottomNav:{position:'absolute',bottom:0,left:0,right:0,backgroundColor:'#111214',paddingVertical:spacing(1),paddingHorizontal:spacing(2),borderTopWidth:1,borderTopColor:'#1c1d22'},
+bottomNavInner:{flexDirection:'row',justifyContent:'space-around',alignItems:'center'},
+navBtn:{alignItems:'center'},
+navIcon:{fontSize:24,color:'#a3a3aa'},
+navIconActive:{color:'#ffcc00'},
+navText:{color:'#a3a3aa',fontSize:12,fontFamily:'Inter-Regular'},
+navTextActive:{color:'#ffcc00',fontFamily:'Inter-Bold'},
+navBtnCenter:{alignItems:'center',justifyContent:'center',width:50,height:50,borderRadius:25,backgroundColor:'#ffcc00'},
+navIconCenter:{fontSize:24,color:'#000',fontFamily:'Inter-Bold'}
 });
 
 // Редактор задачи — простая модалка без сторонних библиотек
